@@ -28,45 +28,48 @@ class PropertyController extends Controller
     }
     
     public function edit($id) {
-        $property = Property::findOrFail($id);
+        $property = Property::find($id);
         $regions = Region::all();
         return view('property.create', compact('property', 'regions'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+
+        $id = $request->input('id');
+        $rules = [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'type' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'location' => 'required|string',
             'region_id' => 'required|exists:regions,id',
-        ]);
+            'status' => 'required|string|max:255',
+        ];
 
-        Property::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'price' => $request->price,
-            'region_id' => $request->region_id,
-        ]);
+        if ($id) {
+            $rules['featured_image'] = 'nullable|image';
+        } else {
+            $rules['featured_image'] = 'required|image';
+        }
+        $validated = $request->validate($rules);
 
-        return redirect()->route('property.index')->with('success', 'Property created successfully.');
-    }
+        if ($id) {
+            $property = Property::findOrFail($id);
+            $property->fill($validated);
+            if ($request->hasFile('featured_image')) {
+                $property->featured_image = ImageHelper::upload($request->file('featured_image'), 'images/properties');
+            }
+            $property->save();
+            $msg = 'Property updated successfully.';
+        } else {
+            $data = $validated;
+            $data['featured_image'] = ImageHelper::upload($request->file('featured_image'), 'images/properties');
+            Property::create($data);
+            $msg = 'Property created successfully.';
+        }
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-        ]);
-
-        $property = Property::findOrFail($id);
-        $property->title = $request->title;
-        $property->description = $request->description;
-        $property->price = $request->price;
-        $property->save();
-
-        return redirect()->route('property.index')->with('success', 'Property updated successfully.');
+        return redirect()->route('property.index')->with('success', $msg);
     }
 
     public function destroy($id)

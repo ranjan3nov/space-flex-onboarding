@@ -1,4 +1,8 @@
+
 @csrf
+@if(isset($property) && $property->id)
+    <input type="hidden" name="id" value="{{ $property->id }}">
+@endif
 
 <div class="mb-3">
     <label for="title" class="form-label">Title</label>

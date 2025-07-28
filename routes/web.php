@@ -10,7 +10,7 @@ Route::group(['prefix' => 'property', 'as' => 'property.'], function () {
     Route::post('/', [PropertyController::class, 'store'])->name('store');
 
     Route::get('/{id}/edit', [PropertyController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [PropertyController::class, 'update'])->name('update');
+
     Route::delete('/{id}', [PropertyController::class, 'destroy'])->name('destroy');
     Route::post('/{id}/restore', [PropertyController::class, 'restore'])->name('restore');
 });
