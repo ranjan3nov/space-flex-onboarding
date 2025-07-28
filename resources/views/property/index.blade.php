@@ -107,7 +107,6 @@
                         <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#imagesModal" data-images='@json($property->images ?? [$property->featured_image])'>
                            <i class='fa fa-eye'></i>
                         </button>
-
                         <a href="{{ route('property.edit', $property->id) }}" class="btn btn-warning btn-sm">
                             <i class="fa fa-edit"></i>
                         </a>
@@ -129,7 +128,6 @@
                     </td>
                 </tr>
                 @endforeach
-
             </tbody>
         </table>
     </div>
@@ -164,8 +162,13 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    $('#properties-table').DataTable();
+
+    // Modal image logic
     var imagesModal = document.getElementById('imagesModal');
     imagesModal.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget;
@@ -185,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-
 @endpush
 @push('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
